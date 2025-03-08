@@ -174,6 +174,16 @@ public final class HealingSpores extends PlantAbility implements AddonAbility {
                 updateHandIndicator(false);
                 ringSpawned = true;
                 state = State.READY;
+            } else {
+                if (seedUsage) {
+                    String seedText = requiredSeeds == 1 ? "wheat seed" : "wheat seeds";
+                    TextComponent message = new TextComponent(
+                            ChatColor.translateAlternateColorCodes('&',
+                                    "&7Consuming " + requiredSeeds + " " + seedText + ", keep holding shift..")
+                    );
+                    player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
+                }
+                spawnMossParticles(GeneralMethods.getMainHandLocation(player));
             }
         } else {
             cleanupHandIndicator();
@@ -250,9 +260,10 @@ public final class HealingSpores extends PlantAbility implements AddonAbility {
     }
 
     private void sendSeedRequirementMessage() {
+        String seedText = requiredSeeds == 1 ? "wheat seed" : "wheat seeds";
         TextComponent message = new TextComponent(
                 ChatColor.translateAlternateColorCodes('&',
-                        "&cYou need at least " + requiredSeeds + " wheat seeds.")
+                        "&cYou need at least " + requiredSeeds + " " + seedText + " to use this ability.")
         );
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
     }
@@ -260,6 +271,11 @@ public final class HealingSpores extends PlantAbility implements AddonAbility {
     private void returnSeeds() {
         if (seedUsage) {
             player.getInventory().addItem(new ItemStack(Material.WHEAT_SEEDS, requiredSeeds));
+            TextComponent message = new TextComponent(
+                    ChatColor.translateAlternateColorCodes('&',
+                            "&7HealingSpores not activated; your seeds were returned.")
+            );
+            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, message);
         }
     }
 
